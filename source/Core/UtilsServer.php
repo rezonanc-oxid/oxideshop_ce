@@ -240,7 +240,8 @@ class UtilsServer extends \OxidEsales\Eshop\Core\Base
     {
         $sValue = null;
         if ($sName && isset($_COOKIE[$sName])) {
-            $sValue = \OxidEsales\Eshop\Core\Registry::getConfig()->checkParamSpecialChars($_COOKIE[$sName]);
+            $request = Registry::get(\OxidEsales\Eshop\Core\Request::class);
+            $sValue = $request->replaceSpecialChars($_COOKIE[$sName]);
         } elseif ($sName && !isset($_COOKIE[$sName])) {
             $sValue = isset($this->_sSessionCookies[$sName]) ? $this->_sSessionCookies[$sName] : null;
         } elseif (!$sName && isset($_COOKIE)) {

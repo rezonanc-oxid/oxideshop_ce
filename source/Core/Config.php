@@ -758,6 +758,10 @@ class Config extends \OxidEsales\Eshop\Core\Base
      * Checks if passed parameter has special chars and replaces them.
      * Returns checked value.
      *
+     * @deprecated since v6.0.0-rc.2 (2017-08-14).
+     *             Use method replaceSpecialChars instead.
+     *             See https://bugs.oxid-esales.com/view.php?id=6477
+     *
      * @param mixed $value value to process escaping
      * @param array $raw   keys of unescaped values
      *
@@ -766,6 +770,20 @@ class Config extends \OxidEsales\Eshop\Core\Base
     public function checkParamSpecialChars(&$value, $raw = null)
     {
         return Registry::get(\OxidEsales\Eshop\Core\Request::class)->checkParamSpecialChars($value, $raw);
+    }
+
+    /**
+     * Checks if passed parameter has special chars and replaces them.
+     * Returns checked value.
+     *
+     * @param mixed $dataWithSpecialChars value to process escaping
+     * @param array $raw                  keys of unescaped values
+     *
+     * @return mixed
+     */
+    public function replaceSpecialChars($dataWithSpecialChars, $raw = null)
+    {
+        return Registry::get(\OxidEsales\Eshop\Core\Request::class)->replaceSpecialChars($dataWithSpecialChars, $raw);
     }
 
     /**

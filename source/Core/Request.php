@@ -107,6 +107,10 @@ class Request
      * Checks if passed parameter has special chars and replaces them.
      * Returns checked value.
      *
+     * @deprecated since v6.0.0-rc.2 (2017-08-14).
+     *             Use method replaceSpecialChars instead.
+     *             See https://bugs.oxid-esales.com/view.php?id=6477
+     *
      * @param mixed $sValue value to process escaping
      * @param array $aRaw   keys of unescaped values
      *
@@ -114,32 +118,47 @@ class Request
      */
     public function checkParamSpecialChars(& $sValue, $aRaw = null)
     {
-        if (is_object($sValue)) {
-            return $sValue;
+        $sValue = $this->replaceSpecialChars($sValue, $aRaw);
+        return $sValue;
+    }
+
+
+    /**
+     * Replaces special characters.
+     *
+     * @param mixed $dataWithSpecialChars can be a string or an array
+     * @param array $raw                  array keys which should not be replaced
+     *
+     * @return mixed
+     */
+    public function replaceSpecialChars($dataWithSpecialChars, $raw = null)
+    {
+        if (is_object($dataWithSpecialChars)) {
+            return $dataWithSpecialChars;
         }
 
-        if (is_array($sValue)) {
+        if (is_array($dataWithSpecialChars)) {
             $newValue = [];
-            foreach ($sValue as $sKey => $sVal) {
-                $sValidKey = $sKey;
-                if (!$aRaw || !in_array($sKey, $aRaw)) {
-                    $this->checkParamSpecialChars($sValidKey);
-                    $this->checkParamSpecialChars($sVal);
-                    if ($sValidKey != $sKey) {
-                        unset($sValue[$sKey]);
+            foreach ($dataWithSpecialChars as $key => $val) {
+                $validKey = $key;
+                if (!$raw || !in_array($key, $raw)) {
+                    $validKey = $this->replaceSpecialChars($validKey);
+                    $val = $this->replaceSpecialChars($val);
+                    if ($validKey != $key) {
+                        unset($dataWithSpecialChars[$key]);
                     }
                 }
-                $newValue[$sValidKey] = $sVal;
+                $newValue[$validKey] = $val;
             }
-            $sValue = $newValue;
-        } elseif (is_string($sValue)) {
-            $sValue = str_replace(
-                ['&', '<', '>', '"', "'", chr(0), '\\', "\n", "\r"],
-                ['&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '', '&#092;', '&#10;', '&#13;'],
-                $sValue
+            $dataWithSpecialChars = $newValue;
+        } elseif (is_string($dataWithSpecialChars)) {
+            $dataWithSpecialChars = str_replace(
+                array('&', '<', '>', '"', "'", chr(0), '\\', "\n", "\r"),
+                array('&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '', '&#092;', '&#10;', '&#13;'),
+                $dataWithSpecialChars
             );
         }
 
-        return $sValue;
+        return $dataWithSpecialChars;
     }
 }

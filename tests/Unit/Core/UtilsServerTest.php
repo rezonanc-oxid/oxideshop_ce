@@ -193,31 +193,67 @@ class UtilsServerTest extends \OxidTestCase
         $this->assertNull(\OxidEsales\Eshop\Core\Registry::getUtilsServer()->setOxCookie($sName, $sValue));
     }
 
-    public function testGetCookie()
+    /**
+     * See https://bugs.oxid-esales.com/view.php?id=6477
+     */
+    public function testGetOxCookieDoesNotModifyReference()
     {
-        // $sName = null
-        /*  $aCookie = \OxidEsales\Eshop\Core\Registry::getUtilsServer()->getOxCookie();
-  var_dump($_COOKIE);
-  var_dump($aCookie);
-          $this->assertTrue((isset($aCookie) && ($aCookie[0] == null)));
-          $this->assertNull(\OxidEsales\Eshop\Core\Registry::getUtilsServer()->getOxCookie('test'));*/
+        $exception = null;
+        $cookieTestData = [
+            'UtilsServerTest_testGetOxCookieDoesNotModifyReference_testData' => 'special>characters'
+        ];
 
-        $aC = $_COOKIE;
-        $e = null;
         try {
-
-            $_COOKIE['test'] = "asd'\"\000aa";
-            $this->assertEquals("asd&#039;&quot;aa", \OxidEsales\Eshop\Core\Registry::getUtilsServer()->getOxCookie('test'));
-        } catch (Exception $e) {
+            $cookieBackup = $this->setPhpGlobalVariableCookie($cookieTestData);
+            \OxidEsales\Eshop\Core\Registry::getUtilsServer()->getOxCookie(
+                'UtilsServerTest_testGetOxCookieDoesNotModifyReference_testData'
+            );
+            $this->assertEquals($cookieTestData, $_COOKIE);
+        } catch (\Exception $exception) {
         }
 
-        // restore data
-        $_COOKIE = $aC;
+        $this->setPhpGlobalVariableCookie($cookieBackup);
 
-        // check if exception has beed thrown
-        if ($e) {
-            throw $e;
+        if ($exception) {
+            throw $exception;
         }
+    }
+
+    public function testGetOxCookieEscapesSpecialCharacters()
+    {
+
+        $exception = null;
+        $cookieTestData = [
+            'UtilsServerTest_testGetCookieEscapesSpecialCharacters_testData' => "asd'\"\000aa"
+        ];
+
+        try {
+            $cookieBackup = $this->setPhpGlobalVariableCookie($cookieTestData);
+            $actualResult = \OxidEsales\Eshop\Core\Registry::getUtilsServer()->getOxCookie(
+                'UtilsServerTest_testGetCookieEscapesSpecialCharacters_testData'
+            );
+
+            $this->assertEquals("asd&#039;&quot;aa", $actualResult);
+        } catch (Exception $exception) {
+        }
+
+        $this->setPhpGlobalVariableCookie($cookieBackup);
+
+        if ($exception) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param array $contentToSet
+     *
+     * @return array backup of $_COOKIE
+     */
+    private function setPhpGlobalVariableCookie(array $contentToSet)
+    {
+        $cookieBackup = $_COOKIE;
+        $_COOKIE = $contentToSet;
+        return $cookieBackup;
     }
 
     public function testGetRemoteAddress()

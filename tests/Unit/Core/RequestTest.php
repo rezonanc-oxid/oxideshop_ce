@@ -15,60 +15,61 @@
  * You should have received a copy of the GNU General Public License
  * along with OXID eShop Community Edition.  If not, see <http://www.gnu.org/licenses/>.
  *
- * @link      http://www.oxid-esales.com
- * @copyright (C) OXID eSales AG 2003-2016
- * @version   OXID eShop CE
+ * @link          http://www.oxid-esales.com
+ * @copyright (C) OXID eSales AG 2003-2017
+ * @version       OXID eShop CE
  */
+
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
-use OxidEsales\EshopCommunity\Core\Request;
-use stdClass;
-
-class RequestTest extends \OxidTestCase
+class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
 {
+
+    /**
+     * @var \OxidEsales\Eshop\Core\Request
+     */
+    protected $request;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->request = oxNew(\OxidEsales\EshopCommunity\Core\Request::class);
+    }
+
     public function testGetRequestEscapedParameter()
     {
-        $request = oxNew(Request::class);
         $_POST['postKey'] = '&test';
 
-        $this->assertSame('&amp;test', $request->getRequestEscapedParameter('postKey'));
+        $this->assertSame('&amp;test', $this->request->getRequestEscapedParameter('postKey'));
     }
 
     public function testGetRequestEscapedParameterWhenParameterNotFound()
     {
-        $request = oxNew(Request::class);
-
-        $this->assertSame(null, $request->getRequestEscapedParameter('notExistingPostKey'));
+        $this->assertSame(null, $this->request->getRequestEscapedParameter('notExistingPostKey'));
     }
 
     public function testGetRequestEscapedParameterWhenParameterNotFoundAndDefaultValueIsProvided()
     {
-        $request = oxNew(Request::class);
-
-        $this->assertSame('defaultValue', $request->getRequestEscapedParameter('notExistingPostKey', 'defaultValue'));
+        $this->assertSame('defaultValue', $this->request->getRequestEscapedParameter('notExistingPostKey', 'defaultValue'));
     }
 
     public function testGetRequestRawParameterFromPost()
     {
-        $request = oxNew(Request::class);
         $_POST['postKey'] = 'testValue';
 
-        $this->assertSame('testValue', $request->getRequestParameter('postKey'));
+        $this->assertSame('testValue', $this->request->getRequestParameter('postKey'));
     }
 
     public function testGetRequestRawParameterFromGet()
     {
-        $request = oxNew(Request::class);
         $_GET['getKey'] = 'testValue';
 
-        $this->assertSame('testValue', $request->getRequestParameter('getKey'));
+        $this->assertSame('testValue', $this->request->getRequestParameter('getKey'));
     }
 
     public function testGetRequestRawParameterWhenRequestParametersNotFound()
     {
-        $request = oxNew(Request::class);
-
-        $this->assertSame('defaultValue', $request->getRequestParameter('nonExisting', 'defaultValue'));
+        $this->assertSame('defaultValue', $this->request->getRequestParameter('nonExisting', 'defaultValue'));
     }
 
     /**
@@ -79,8 +80,7 @@ class RequestTest extends \OxidTestCase
         $_SERVER["REQUEST_METHOD"] = 'GET';
         $_SERVER['REQUEST_URI'] = 'test.php?param1=value1&param2=value2';
 
-        $request = oxNew(Request::class);
-        $this->assertEquals('index.php?param1=value1&amp;param2=value2', $request->getRequestUrl());
+        $this->assertEquals('index.php?param1=value1&amp;param2=value2', $this->request->getRequestUrl());
     }
 
     /**
@@ -91,8 +91,7 @@ class RequestTest extends \OxidTestCase
         $_SERVER["REQUEST_METHOD"] = 'GET';
         $_SERVER['REQUEST_URI'] = $sUri = '/shop/';
 
-        $request = oxNew(Request::class);
-        $this->assertEquals('', $request->getRequestUrl());
+        $this->assertEquals('', $this->request->getRequestUrl());
     }
 
     /**
@@ -103,8 +102,7 @@ class RequestTest extends \OxidTestCase
         $_SERVER["REQUEST_METHOD"] = 'GET';
         $_SERVER['SCRIPT_URI'] = '/shop/?cl=details';
 
-        $request = oxNew(Request::class);
-        $this->assertEquals('index.php?cl=details', $request->getRequestUrl());
+        $this->assertEquals('index.php?cl=details', $this->request->getRequestUrl());
     }
 
     /**
@@ -112,77 +110,15 @@ class RequestTest extends \OxidTestCase
      */
     public function testGetRequestUrl_removingSID()
     {
-        $request = oxNew(Request::class);
         $_SERVER["REQUEST_METHOD"] = 'GET';
         $_SERVER['REQUEST_URI'] = 'test.php?param1=value1&sid=zzz&sysid=vvv&param2=ttt';
-        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $request->getRequestUrl());
+        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $this->request->getRequestUrl());
 
         $_SERVER['REQUEST_URI'] = 'test.php?sid=zzz&param1=value1&sysid=vvv&param2=ttt';
-        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $request->getRequestUrl());
+        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $this->request->getRequestUrl());
 
         $_SERVER['REQUEST_URI'] = 'test.php?param1=value1&sysid=vvv&param2=ttt&sid=zzz';
-        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $request->getRequestUrl());
-    }
-
-    /**
-     * Testing input processor. Checking 3 cases - passing object, array, string.
-     *
-     */
-    public function testCheckParamSpecialChars()
-    {
-        $oVar = new stdClass();
-        $oVar->xxx = 'yyy';
-        $aVar = array('&\\o<x>i"\'d' . chr(0));
-        $sVar = '&\\o<x>i"\'d' . chr(0);
-        $request = oxNew(Request::class);
-
-        // object must came back the same
-        $this->assertEquals($oVar, $request->checkParamSpecialChars($oVar));
-
-        // array items comes fixed
-        $this->assertEquals(array("&amp;&#092;o&lt;x&gt;i&quot;&#039;d"), $request->checkParamSpecialChars($aVar));
-
-        // string comes fixed
-        $this->assertEquals('&amp;&#092;o&lt;x&gt;i&quot;&#039;d', $request->checkParamSpecialChars($sVar));
-    }
-
-    /**
-     * Testing input processor. Checking array, if few values must not be checked.
-     *
-     */
-    public function testCheckParamSpecialCharsForArray()
-    {
-        $values = array('first' => 'first char &', 'second' => 'second char &', 'third' => 'third char &');
-        $aRaw = array('first', 'third');
-
-        $result = oxNew(Request::class)->checkParamSpecialChars($values, $aRaw);
-
-        // object must came back the same
-        $this->assertEquals($values['first'], $result['first']);
-        $this->assertEquals('second char &amp;', $result['second']);
-        $this->assertEquals($values['third'], $result['third']);
-    }
-
-    /**
-     * Test if checkParamSpecialChars also can fix arrays
-     *
-     */
-    public function testCheckParamSpecialCharsAlsoFixesArrayKeys()
-    {
-        $test = array(
-            array(
-                'data'   => array('asd&' => 'a%&'),
-                'result' => array('asd&amp;' => 'a%&amp;'),
-            ),
-            array(
-                'data'   => 'asd&',
-                'result' => 'asd&amp;',
-            )
-        );
-        $request = oxNew(Request::class);
-        foreach ($test as $check) {
-            $this->assertEquals($check['result'], $request->checkParamSpecialChars($check['data']));
-        }
+        $this->assertEquals('index.php?param1=value1&amp;sysid=vvv&amp;param2=ttt', $this->request->getRequestUrl());
     }
 
     /**
@@ -201,21 +137,118 @@ class RequestTest extends \OxidTestCase
     /**
      * @dataProvider providerCheckParamSpecialChars_newLineExist_newLineChanged
      */
-    public function testCheckParamSpecialChars_newLineExist_newLineChanged($sNewLineCharacter, $sEscapedNewLineCharacter)
+    public function testCheckParamSpecialChars_newLineExist_newLineChanged($newLineCharacter, $escapedNewLineCharacter)
     {
-        $oVar = new stdClass();
-        $oVar->xxx = "text" . $sNewLineCharacter;
-        $aVar = array("text" . $sNewLineCharacter);
-        $sVar = "text" . $sNewLineCharacter;
+        $anObject = new \stdClass();
+        $anObject->xxx = "text" . $newLineCharacter;
+        $anArray = array("text" . $newLineCharacter);
+        $aString = "text" . $newLineCharacter;
 
-        $request = oxNew(Request::class);
-        // object must came back the same
-        $this->assertEquals($oVar, $request->checkParamSpecialChars($oVar));
+        // test object
+        $this->assertEquals($anObject, $this->request->replaceSpecialChars($anObject));
+        $this->assertEquals($anObject, $this->request->checkParamSpecialChars($anObject));
 
-        // array items comes fixed
-        $this->assertEquals(array("text" . $sEscapedNewLineCharacter), $request->checkParamSpecialChars($aVar));
+        // test array
+        $this->assertEquals(array("text" . $escapedNewLineCharacter), $this->request->replaceSpecialChars($anArray));
+        $this->assertEquals(array("text" . $escapedNewLineCharacter), $this->request->checkParamSpecialChars($anArray));
 
-        // string comes fixed
-        $this->assertEquals("text" . $sEscapedNewLineCharacter, $request->checkParamSpecialChars($sVar));
+        // test string
+        $this->assertEquals("text" . $escapedNewLineCharacter, $this->request->replaceSpecialChars($aString));
+        $this->assertEquals("text" . $escapedNewLineCharacter, $this->request->checkParamSpecialChars($aString));
+    }
+
+    /**
+     * @return array
+     */
+    public function providerReplaceSpecialCharsAndCheckParamSpecialChars()
+    {
+        $stdClass = new \stdClass();
+        $stdClass->xxx = 'yyy';
+
+        return [
+            'string'                       => [
+                'expectedResult'       => '&amp;&#092;o&lt;x&gt;i&quot;&#039;d',
+                'dataWithSpecialChars' => '&\\o<x>i"\'d' . chr(0),
+                'raw'                  => null
+            ],
+            'array'                        => [
+                'expectedResult'       => ["&amp;&#092;o&lt;x&gt;i&quot;&#039;d"],
+                'dataWithSpecialChars' => ['&\\o<x>i"\'d' . chr(0)],
+                'raw'                  => null
+            ],
+            'object'                       => [
+                'expectedResult'       => $stdClass,
+                'dataWithSpecialChars' => $stdClass,
+                'raw'                  => null
+            ],
+            'returnRawValueForArrayValues' => [
+                'expectedResult'       => [
+                    'first'  => 'first char &',
+                    'second' => 'second char &amp;',
+                    'third'  => 'third char &'
+                ],
+                'dataWithSpecialChars' => [
+                    'first'  => 'first char &',
+                    'second' => 'second char &',
+                    'third'  => 'third char &'
+                ],
+                'raw'                  => ['first', 'third']
+            ],
+            'arrayKeys1'                   => [
+                'expectedResult'       => ['asd&amp;' => 'a%&amp;'],
+                'dataWithSpecialChars' => ['asd&' => 'a%&'],
+                'raw'                  => null
+            ],
+            'string2'                      => [
+                'expectedResult'       => ['asd&amp;'],
+                'dataWithSpecialChars' => ['asd&'],
+                'raw'                  => null
+            ]
+        ];
+    }
+
+    /**
+     * Both methods checkParamSpecialChars and replaceSpecialChars should behave the same, except that
+     * replaceSpecialChars does not modify the parameter by reference.
+     *
+     * @dataProvider providerReplaceSpecialCharsAndCheckParamSpecialChars
+     *
+     */
+    public function testReplaceSpecialCharsAndCheckParamSpecialChars($containerWithSpecialChars, $containerWithReplaceSpecialChars, $raw = null)
+    {
+        $this->assertEquals(
+            $containerWithSpecialChars,
+            $this->request->replaceSpecialChars($containerWithReplaceSpecialChars, $raw)
+        );
+        $this->assertEquals(
+            $containerWithSpecialChars,
+            $this->request->checkParamSpecialChars($containerWithReplaceSpecialChars, $raw)
+        );
+    }
+
+    /*
+     * Both methods checkParamSpecialChars and replaceSpecialChars should behave the same, except that
+     * replaceSpecialChars does not modify the parameter by reference.
+     */
+    public function testReplaceSpecialCharsDoesNotModifyByReference()
+    {
+        $stringWithSpecialChars = '&\\o<x>i"\'d' . chr(0);
+        $originalStringWithSpecialChars = '&\\o<x>i"\'d' . chr(0);
+
+        $this->request->replaceSpecialChars($stringWithSpecialChars);
+        $this->assertEquals($originalStringWithSpecialChars, $stringWithSpecialChars);
+    }
+
+    /*
+     * Both methods checkParamSpecialChars and replaceSpecialChars should behave the same, except that
+     * replaceSpecialChars does not modify the parameter by reference.
+     */
+    public function testCheckParamSpecialCharsDoesModifyByReference()
+    {
+        $stringWithSpecialChars = '&\\o<x>i"\'d' . chr(0);
+        $stringWithReplacedSpecialChars = '&amp;&#092;o&lt;x&gt;i&quot;&#039;d';
+
+        $this->request->checkParamSpecialChars($stringWithSpecialChars);
+        $this->assertEquals($stringWithReplacedSpecialChars, $stringWithSpecialChars);
     }
 }

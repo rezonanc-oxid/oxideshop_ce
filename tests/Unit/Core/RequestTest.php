@@ -22,6 +22,11 @@
 
 namespace OxidEsales\EshopCommunity\Tests\Unit\Core;
 
+/**
+ * Class RequestTest
+ *
+ * @package OxidEsales\EshopCommunity\Tests\Unit\Core
+ */
 class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
 {
 
@@ -124,7 +129,7 @@ class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
     /**
      * @return array
      */
-    public function providerCheckParamSpecialChars_newLineExist_newLineChanged()
+    public function providerNewLines()
     {
         return array(
             array("\r", '&#13;'),
@@ -135,9 +140,35 @@ class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
     }
 
     /**
-     * @dataProvider providerCheckParamSpecialChars_newLineExist_newLineChanged
+     * @dataProvider providerNewLines
+     *
+     * @param string $newLineCharacter
+     * @param string $escapedNewLineCharacter
      */
-    public function testCheckParamSpecialChars_newLineExist_newLineChanged($newLineCharacter, $escapedNewLineCharacter)
+    public function testCheckParamSpecialCharsReplacesNewLines($newLineCharacter, $escapedNewLineCharacter)
+    {
+        $anObject = new \stdClass();
+        $anObject->xxx = "text" . $newLineCharacter;
+        $anArray = array("text" . $newLineCharacter);
+        $aString = "text" . $newLineCharacter;
+
+        // test object
+        $this->assertEquals($anObject, $this->request->checkParamSpecialChars($anObject));
+
+        // test array
+        $this->assertEquals(array("text" . $escapedNewLineCharacter), $this->request->checkParamSpecialChars($anArray));
+
+        // test string
+        $this->assertEquals("text" . $escapedNewLineCharacter, $this->request->checkParamSpecialChars($aString));
+    }
+
+    /**
+     * @dataProvider providerNewLines
+     *
+     * @param string $newLineCharacter
+     * @param string $escapedNewLineCharacter
+     */
+    public function testReplaceSpecialCharsReplacesNewLines($newLineCharacter, $escapedNewLineCharacter)
     {
         $anObject = new \stdClass();
         $anObject->xxx = "text" . $newLineCharacter;
@@ -146,21 +177,41 @@ class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
 
         // test object
         $this->assertEquals($anObject, $this->request->replaceSpecialChars($anObject));
-        $this->assertEquals($anObject, $this->request->checkParamSpecialChars($anObject));
 
         // test array
         $this->assertEquals(array("text" . $escapedNewLineCharacter), $this->request->replaceSpecialChars($anArray));
-        $this->assertEquals(array("text" . $escapedNewLineCharacter), $this->request->checkParamSpecialChars($anArray));
 
         // test string
         $this->assertEquals("text" . $escapedNewLineCharacter, $this->request->replaceSpecialChars($aString));
-        $this->assertEquals("text" . $escapedNewLineCharacter, $this->request->checkParamSpecialChars($aString));
     }
 
     /**
      * @return array
      */
-    public function providerReplaceSpecialCharsAndCheckParamSpecialChars()
+    public function providerCheckParamSpecialChars()
+    {
+        return $this->providerReplaceSpecialChars();
+    }
+
+    /**
+     * Both methods checkParamSpecialChars and replaceSpecialChars should behave the same, except that
+     * replaceSpecialChars does not modify the parameter by reference. Therefor we use the same dataProvider.
+     *
+     * @dataProvider providerCheckParamSpecialChars
+     *
+     */
+    public function testCheckParamSpecialChars($containerWithSpecialChars, $containerWithReplaceSpecialChars, $raw = null)
+    {
+        $this->assertEquals(
+            $containerWithSpecialChars,
+            $this->request->checkParamSpecialChars($containerWithReplaceSpecialChars, $raw)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function providerReplaceSpecialChars()
     {
         $stdClass = new \stdClass();
         $stdClass->xxx = 'yyy';
@@ -209,17 +260,13 @@ class RequestTest extends \OxidEsales\TestingLibrary\UnitTestCase
 
     /**
      * Both methods checkParamSpecialChars and replaceSpecialChars should behave the same, except that
-     * replaceSpecialChars does not modify the parameter by reference.
+     * replaceSpecialChars does not modify the parameter by reference. Therefor we use the same dataProvider.
      *
-     * @dataProvider providerReplaceSpecialCharsAndCheckParamSpecialChars
+     * @dataProvider providerReplaceSpecialChars
      *
      */
-    public function testReplaceSpecialCharsAndCheckParamSpecialChars($containerWithSpecialChars, $containerWithReplaceSpecialChars, $raw = null)
+    public function testReplaceSpecialChars($containerWithSpecialChars, $containerWithReplaceSpecialChars, $raw = null)
     {
-        $this->assertEquals(
-            $containerWithSpecialChars,
-            $this->request->replaceSpecialChars($containerWithReplaceSpecialChars, $raw)
-        );
         $this->assertEquals(
             $containerWithSpecialChars,
             $this->request->checkParamSpecialChars($containerWithReplaceSpecialChars, $raw)

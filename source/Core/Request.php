@@ -153,8 +153,8 @@ class Request
             $dataWithSpecialChars = $newValue;
         } elseif (is_string($dataWithSpecialChars)) {
             $dataWithSpecialChars = str_replace(
-                array('&', '<', '>', '"', "'", chr(0), '\\', "\n", "\r"),
-                array('&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '', '&#092;', '&#10;', '&#13;'),
+                ['&', '<', '>', '"', "'", chr(0), '\\', "\n", "\r"],
+                ['&amp;', '&lt;', '&gt;', '&quot;', '&#039;', '', '&#092;', '&#10;', '&#13;'],
                 $dataWithSpecialChars
             );
         }

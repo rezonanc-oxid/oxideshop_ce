@@ -344,4 +344,46 @@ class AccountTest extends \OxidTestCase
 
         $this->assertEquals(oxRegistry::getLang()->translateString('PAGE_TITLE_ACCOUNT', oxRegistry::getLang()->getBaseLanguage(), false) . ' - "Jon"', $oView->getTitle());
     }
+
+
+    /**
+     * If there is no active user the number of items returned by
+     * \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
+     * should be 0
+     *
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
+     */
+    public function testGetProductReviewItemsCntReturnZeroForNoUser()
+    {
+        $expectedReviewsCount = 0;
+
+        $accountReviewControllerMock = $this->getMock(\OxidEsales\Eshop\Application\Controller\AccountController::class, ['getUser']);
+        $accountReviewControllerMock->expects($this->any())->method('getUser')->will($this->returnValue(false));
+
+        $actualReviewsCount = $accountReviewControllerMock->getProductReviewItemsCnt();
+
+        $this->assertSame( $expectedReviewsCount, $actualReviewsCount);
+    }
+
+    /**
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
+     */
+    public function testGetProductReviewItemsCntReturnsExpectedCountForActiveUser()
+    {
+        $expectedReviewsCount = 100;
+
+        $userMock = $this->getMock(\OxidEsales\Eshop\Application\Model\User::class, ['getId']);
+        $userMock->expects($this->any())->method('getId')->will($this->returnValue("userId"));
+
+        $accountReviewControllerMock = $this->getMock(\OxidEsales\Eshop\Application\Controller\AccountController::class, ['getUser']);
+        $accountReviewControllerMock->expects($this->any())->method('getUser')->will($this->returnValue($userMock));
+
+        $reviewsMock = $this->getMock(\OxidEsales\Eshop\Application\Model\Review::class, ['getProductReviewItemsCntByUserId']);
+        $reviewsMock->expects($this->any())->method('getProductReviewItemsCntByUserId')->will($this->returnValue($expectedReviewsCount));
+        \oxTestModules::addModuleObject(\OxidEsales\Eshop\Application\Model\Review::class, $reviewsMock);
+
+        $actualReviewsCount = $accountReviewControllerMock->getProductReviewItemsCnt();
+
+        $this->assertSame( $expectedReviewsCount, $actualReviewsCount);
+    }
 }

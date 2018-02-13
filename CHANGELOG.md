@@ -12,8 +12,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Possibility to delete user account via new methods:
   - `OxidEsales\EshopCommunity\Application\Controller\AccountController::deleteAccount()`
   - `OxidEsales\EshopCommunity\Application\Controller\AccountController::isUserAllowedToDeleteOwnAccount()`
+- Possibility for shop users to manage their product reviews, configurable by admin:
+  - New classes:
+    - `OxidEsales\EshopCommunity\Application\Controller\AccountReviewController`
+  - New methods:
+    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::getShowProductReviewList`
+    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt`
+    - `OxidEsales\EshopCommunity\Application\Model\Rating::getProductRatingByUserId`
+    - `OxidEsales\EshopCommunity\Application\Model\Review::getProductReviewItemsCntByUserId`
+    - `OxidEsales\EshopCommunity\Application\Model\Review::getProductReviewsByUserId`
+    - `OxidEsales\EshopCommunity\Application\Model\Review::getArticle`
+  - New language constants in `Application/translations/[de/en]/lang.php`:
+    - `ERROR_PRODUCT_REVIEW_AND_RATING_NOT_DELETED`
+    - `MY_PRODUCT_REVIEWS`
+  - New language constants in `Application/views/admin/[de/en]/lang.php`:
+    - `SHOP_CONFIG_ALLOW_USERS_MANAGE_PRODUCT_REVIEWS`
 
 ### Changed
+- Application/views/admin/tpl/shop_config.tpl: New control element to configure possibility for users to manage their reviews
 
 ### Deprecated
 

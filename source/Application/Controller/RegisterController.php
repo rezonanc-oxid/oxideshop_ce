@@ -58,6 +58,9 @@ class RegisterController extends \OxidEsales\Eshop\Application\Controller\UserCo
      */
     public function render()
     {
+
+        throw new \Exception('Test exception output');
+
         parent::render();
 
         // checking registration status

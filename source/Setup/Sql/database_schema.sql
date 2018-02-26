@@ -19,7 +19,7 @@ CREATE TABLE `oxacceptedterms` (
   `OXACCEPTEDTIME` datetime NOT NULL default '0000-00-00 00:00:00' COMMENT 'Time, when terms were accepted',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY (`OXUSERID`, `OXSHOPID`)
-) ENGINE=InnoDB COMMENT='Shows which users has accepted shop terms';
+) ENGINE=InnoDB COMMENT='Shows which users has accepted shop terms' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxaccessoire2article`
@@ -36,7 +36,7 @@ CREATE TABLE `oxaccessoire2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXARTICLENID` (`OXARTICLENID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between article and its accessory articles';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between article and its accessory articles' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxactions`
@@ -72,7 +72,7 @@ CREATE TABLE `oxactions` (
   PRIMARY KEY  (`OXID`),
   index(`oxsort`),
   index(`OXTYPE`, `OXACTIVE`, `OXACTIVETO`, `OXACTIVEFROM`)
-) ENGINE=InnoDB COMMENT 'Stores information about actions, promotions and banners';
+) ENGINE=InnoDB COMMENT 'Stores information about actions, promotions and banners' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxactions2article`
@@ -90,7 +90,7 @@ CREATE TABLE `oxactions2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXMAINIDX` (`OXSHOPID`,`OXACTIONID`,`OXSORT`),
   KEY `OXARTID` (`OXARTID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between actions and articles';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between actions and articles' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxaddress`
@@ -119,7 +119,7 @@ CREATE TABLE `oxaddress` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXUSERID` (`OXUSERID`)
-) ENGINE=InnoDB COMMENT 'Stores user shipping addresses';
+) ENGINE=InnoDB COMMENT 'Stores user shipping addresses' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxadminlog`
@@ -131,7 +131,7 @@ CREATE TABLE `oxadminlog` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL default '' COMMENT 'User id (oxuser)',
   `OXSQL` text NOT NULL COMMENT 'Logged sql'
-) ENGINE=InnoDB COMMENT 'Logs admin actions';
+) ENGINE=InnoDB COMMENT 'Logs admin actions' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxarticles`
@@ -267,7 +267,7 @@ CREATE TABLE `oxarticles` (
   KEY `OXUPDATEPRICETIME` ( `OXUPDATEPRICETIME` ),
   KEY `OXISDOWNLOADABLE` ( `OXISDOWNLOADABLE` ),
   KEY `OXPRICE` ( `OXPRICE` )
-)ENGINE=InnoDB COMMENT 'Articles information';
+)ENGINE=InnoDB COMMENT 'Articles information' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxartextends`
@@ -284,7 +284,7 @@ CREATE TABLE `oxartextends` (
   `OXLONGDESC_3` text NOT NULL,
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Additional information for articles';
+) ENGINE=InnoDB COMMENT 'Additional information for articles' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxattribute`
@@ -303,7 +303,7 @@ CREATE TABLE `oxattribute` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   `OXDISPLAYINBASKET` tinyint(1) NOT NULL default '0' COMMENT 'Display attribute`s value for articles in checkout',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Article attributes';
+) ENGINE=InnoDB COMMENT 'Article attributes' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 #
@@ -362,7 +362,7 @@ CREATE TABLE `oxcategories` (
    KEY `OXSHOPID` (`OXSHOPID`),
    KEY `OXSORT` (`OXSORT`),
    KEY `OXVAT` (`OXVAT`)
-) ENGINE=InnoDB COMMENT 'Article categories';
+) ENGINE=InnoDB COMMENT 'Article categories' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxcategory2attribute`
@@ -378,7 +378,7 @@ CREATE TABLE `oxcategory2attribute` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Creation time',
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between categories and attributes';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between categories and attributes' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 #
@@ -398,7 +398,7 @@ CREATE TABLE `oxconfig` (
   PRIMARY KEY  (`OXID`),
   KEY `OXVARNAME` (`OXVARNAME`),
   KEY `listall` (`OXSHOPID`, `OXMODULE`)
-) ENGINE=InnoDB COMMENT 'Shop configuration values';
+) ENGINE=InnoDB COMMENT 'Shop configuration values' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxconfigdisplay`
@@ -417,7 +417,7 @@ CREATE TABLE `oxconfigdisplay` (
   `OXTIMESTAMP`     timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `list` (`OXCFGMODULE`, `OXCFGVARNAME`)
-) ENGINE=InnoDB COMMENT 'Additional configuraion fields';
+) ENGINE=InnoDB COMMENT 'Additional configuraion fields' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxcontents`
@@ -451,7 +451,7 @@ CREATE TABLE `oxcontents` (
   PRIMARY KEY  (`OXID`),
   UNIQUE KEY `OXLOADID` (`OXLOADID`),
   INDEX `cat_search` ( `OXTYPE` , `OXSHOPID` , `OXSNIPPET` , `OXCATID` )
-) ENGINE=InnoDB COMMENT 'Content pages (Snippets, Menu, Categories, Manual)';
+) ENGINE=InnoDB COMMENT 'Content pages (Snippets, Menu, Categories, Manual)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxcounters`
@@ -464,7 +464,7 @@ CREATE TABLE  `oxcounters` (
   `OXCOUNT` INT NOT NULL COMMENT 'Counted number',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY (  `OXIDENT` )
-) ENGINE = InnoDB COMMENT 'Shop counters';
+) ENGINE = InnoDB COMMENT 'Shop counters' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxcountry`
@@ -496,7 +496,7 @@ CREATE TABLE `oxcountry` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'Countries list';
+) ENGINE=InnoDB COMMENT 'Countries list' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxdel2delset`
@@ -511,7 +511,7 @@ CREATE TABLE `oxdel2delset` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXDELID` (`OXDELID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between Shipping cost rules (oxdelivery) and delivery methods (oxdeliveryset)';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between Shipping cost rules (oxdelivery) and delivery methods (oxdeliveryset)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxdelivery`
@@ -540,7 +540,7 @@ CREATE TABLE `oxdelivery` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`)
-)  ENGINE=InnoDB COMMENT 'Delivery shipping cost rules';
+)  ENGINE=InnoDB COMMENT 'Delivery shipping cost rules' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxdeliveryset`
@@ -562,7 +562,7 @@ CREATE TABLE `oxdeliveryset` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Creation time',
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`)
-) ENGINE=InnoDB COMMENT 'Delivery (shipping) methods';
+) ENGINE=InnoDB COMMENT 'Delivery (shipping) methods' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxdiscount`
@@ -597,7 +597,7 @@ CREATE TABLE `oxdiscount` (
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXACTIVEFROM` (`OXACTIVEFROM`),
   KEY `OXACTIVETO` (`OXACTIVETO`)
-) ENGINE=InnoDB COMMENT 'Article discounts';
+) ENGINE=InnoDB COMMENT 'Article discounts' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxfiles`
@@ -618,7 +618,7 @@ CREATE TABLE IF NOT EXISTS `oxfiles` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Creation time',
   PRIMARY KEY (`OXID`),
   KEY `OXARTID` (`OXARTID`)
-) ENGINE=InnoDB COMMENT 'Files available for users to download';
+) ENGINE=InnoDB COMMENT 'Files available for users to download' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxgroups`
@@ -636,7 +636,7 @@ CREATE TABLE `oxgroups` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'User groups';
+) ENGINE=InnoDB COMMENT 'User groups' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxinvitations`
@@ -656,7 +656,7 @@ CREATE TABLE IF NOT EXISTS `oxinvitations` (
    `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
     KEY `OXUSERID` (`OXUSERID`),
     KEY `OXDATE` (`OXDATE`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT 'User sent invitations';
+) ENGINE=InnoDB COMMENT 'User sent invitations' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxlinks`
@@ -679,7 +679,7 @@ CREATE TABLE `oxlinks` (
   KEY `OXSHOPID` (`OXSHOPID`),
   KEY `OXINSERT` (`OXINSERT`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'Links';
+) ENGINE=InnoDB COMMENT 'Links' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxmanufacturers`
@@ -703,7 +703,7 @@ CREATE TABLE `oxmanufacturers` (
   `OXSHOWSUFFIX` tinyint(1) NOT NULL default '1' COMMENT 'Show SEO Suffix in Category',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Shop manufacturers';
+) ENGINE=InnoDB COMMENT 'Shop manufacturers' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxmediaurls`
@@ -725,7 +725,7 @@ CREATE TABLE `oxmediaurls` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
  PRIMARY KEY ( `OXID` ) ,
  INDEX ( `OXOBJECTID` )
-) ENGINE = InnoDB COMMENT 'Stores objects media';
+) ENGINE = InnoDB COMMENT 'Stores objects media' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxnews`
@@ -757,7 +757,7 @@ CREATE TABLE `oxnews` (
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXACTIVEFROM` (`OXACTIVEFROM`),
   KEY `OXACTIVETO` (`OXACTIVETO`)
-) ENGINE=InnoDB COMMENT 'Shop news';
+) ENGINE=InnoDB COMMENT 'Shop news' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxnewsletter`
@@ -774,7 +774,7 @@ CREATE TABLE `oxnewsletter` (
   `OXSUBJECT` varchar(255) character set latin1 collate latin1_general_ci NOT NULL default '' COMMENT 'Subject',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Templates for sending newsletters';
+) ENGINE=InnoDB COMMENT 'Templates for sending newsletters' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxnewssubscribed`
@@ -798,7 +798,7 @@ CREATE TABLE `oxnewssubscribed` (
   PRIMARY KEY (`OXID`),
   UNIQUE KEY `OXEMAIL` (`OXEMAIL`),
   KEY `OXUSERID` (`OXUSERID`)
-) ENGINE=InnoDB COMMENT 'User subscriptions';
+) ENGINE=InnoDB COMMENT 'User subscriptions' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2action`
@@ -815,7 +815,7 @@ CREATE TABLE IF NOT EXISTS `oxobject2action` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXACTIONID` (`OXACTIONID`,`OXCLASS`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci COMMENT 'Shows many-to-many relationship between actions (oxactions) and objects (table set by oxclass)';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between actions (oxactions) and objects (table set by oxclass)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2article`
@@ -832,7 +832,7 @@ CREATE TABLE `oxobject2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXARTICLENID` (`OXARTICLENID`),
   KEY `OXOBJECTID` (`OXOBJECTID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between cross-selling articles';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between cross-selling articles' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2attribute`
@@ -853,7 +853,7 @@ CREATE TABLE `oxobject2attribute` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXATTRID` (`OXATTRID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and attributes';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and attributes' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2category`
@@ -873,7 +873,7 @@ CREATE TABLE `oxobject2category` (
   KEY ( `OXOBJECTID` ),
   KEY (`OXPOS`),
   KEY `OXTIME` (`OXTIME`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and categories';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and categories' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2delivery`
@@ -890,7 +890,7 @@ CREATE TABLE `oxobject2delivery` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXDELIVERYID` ( `OXDELIVERYID` , `OXTYPE` )
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between delivery cost rules and objects (table determined by oxtype)';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between delivery cost rules and objects (table determined by oxtype)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2discount`
@@ -907,7 +907,7 @@ CREATE TABLE `oxobject2discount` (
   PRIMARY KEY  (`OXID`),
   KEY `oxobjectid` (`OXOBJECTID`),
   KEY `oxdiscidx` (`OXDISCOUNTID`,`OXTYPE`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between discounts and objects (table determined by oxtype)';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between discounts and objects (table determined by oxtype)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2group`
@@ -924,7 +924,7 @@ CREATE TABLE `oxobject2group` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   UNIQUE INDEX `UNIQ_OBJECTGROUP` (`OXGROUPSID`, `OXOBJECTID`, `OXSHOPID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between users and groups';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between users and groups' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2list`
@@ -941,7 +941,7 @@ CREATE TABLE `oxobject2list` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXLISTID` (`OXLISTID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and listmania lists';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and listmania lists' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2payment`
@@ -958,7 +958,7 @@ CREATE TABLE `oxobject2payment` (
   PRIMARY KEY  (`OXID`),
   KEY ( `OXOBJECTID` ),
   KEY ( `OXPAYMENTID` )
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between payments and objects (table determined by oxtype)';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between payments and objects (table determined by oxtype)' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2selectlist`
@@ -975,7 +975,7 @@ CREATE TABLE `oxobject2selectlist` (
   PRIMARY KEY  (`OXID`),
   KEY `OXOBJECTID` (`OXOBJECTID`),
   KEY `OXSELNID` (`OXSELNID`)
-) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and selection lists';
+) ENGINE=InnoDB COMMENT 'Shows many-to-many relationship between articles and selection lists' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxobject2seodata`
@@ -993,7 +993,7 @@ CREATE TABLE `oxobject2seodata` (
   `OXDESCRIPTION` TEXT NOT NULL COMMENT 'Description',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY ( `OXOBJECTID` , `OXSHOPID` , `OXLANG` )
-) ENGINE = InnoDB  COMMENT 'Seo entries';
+) ENGINE = InnoDB  COMMENT 'Seo entries' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxorder`
@@ -1079,7 +1079,7 @@ CREATE TABLE `oxorder` (
   `OXISNETTOMODE` tinyint(1) UNSIGNED NOT NULL DEFAULT  '0' COMMENT 'Order created in netto mode',
   PRIMARY KEY  (`OXID`),
   KEY `MAINIDX` (`OXSHOPID`,`OXSTORNO`,`OXORDERDATE`)
-) ENGINE=InnoDB COMMENT 'Shop orders information';
+) ENGINE=InnoDB COMMENT 'Shop orders information' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxorderarticles`
@@ -1136,7 +1136,7 @@ CREATE TABLE `oxorderarticles` (
   KEY `OXORDERID` (`OXORDERID`),
   KEY `OXARTID` (`OXARTID`),
   KEY `OXARTNUM` (`OXARTNUM`)
-) ENGINE=InnoDB COMMENT 'Ordered articles information';
+) ENGINE=InnoDB COMMENT 'Ordered articles information' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxorderfiles`
@@ -1164,7 +1164,7 @@ CREATE TABLE IF NOT EXISTS `oxorderfiles` (
   KEY `OXORDERID` (`OXORDERID`),
   KEY `OXFILEID` (`OXFILEID`),
   KEY `OXORDERARTICLEID` (`OXORDERARTICLEID`)
-) ENGINE=InnoDB COMMENT 'Files, given to users to download after order';
+) ENGINE=InnoDB COMMENT 'Files, given to users to download after order' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxpayments`
@@ -1198,7 +1198,7 @@ CREATE TABLE `oxpayments` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'Payment methods';
+) ENGINE=InnoDB COMMENT 'Payment methods' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxprice2article`
@@ -1218,7 +1218,7 @@ CREATE TABLE `oxprice2article` (
   PRIMARY KEY  (`OXID`),
   KEY `OXSHOPID` (`OXSHOPID`),
  KEY `OXARTID` (`OXARTID`)
-) ENGINE=InnoDB COMMENT 'Article scale prices';
+) ENGINE=InnoDB COMMENT 'Article scale prices' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxpricealarm`
@@ -1239,7 +1239,7 @@ CREATE TABLE `oxpricealarm` (
   `OXSENDED` datetime NOT NULL default '0000-00-00 00:00:00' COMMENT 'Time, when notification was sent',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY (`OXID`)
-) ENGINE=InnoDB COMMENT 'Price fall alarm requests';
+) ENGINE=InnoDB COMMENT 'Price fall alarm requests' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxratings`
@@ -1257,7 +1257,7 @@ CREATE TABLE `oxratings` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `oxobjectsearch` (`OXTYPE`,`OXOBJECTID`)
-) ENGINE=InnoDB COMMENT 'Articles and Listmania ratings';
+) ENGINE=InnoDB COMMENT 'Articles and Listmania ratings' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 #
 # Table structure for table `oxrecommlists`
 #
@@ -1275,7 +1275,7 @@ CREATE TABLE `oxrecommlists` (
   `OXRATING` double NOT NULL default '0' COMMENT 'Rating',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Listmania';
+) ENGINE=InnoDB COMMENT 'Listmania' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxremark`
@@ -1294,7 +1294,7 @@ CREATE TABLE `oxremark` (
   PRIMARY KEY  (`OXID`),
   KEY `OXPARENTID` (`OXPARENTID`),
   KEY `OXTYPE` (`OXTYPE`)
-) ENGINE=InnoDB COMMENT 'User History';
+) ENGINE=InnoDB COMMENT 'User History' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxreviews`
@@ -1315,7 +1315,7 @@ CREATE TABLE `oxreviews` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `oxobjectsearch` (`OXTYPE`,`OXOBJECTID`)
-) ENGINE=InnoDB COMMENT 'Articles and Listmania reviews';
+) ENGINE=InnoDB COMMENT 'Articles and Listmania reviews' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxselectlist`
@@ -1337,7 +1337,7 @@ CREATE TABLE `oxselectlist` (
   `OXVALDESC_3` text NOT NULL,
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Selection lists';
+) ENGINE=InnoDB COMMENT 'Selection lists' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxseo`
@@ -1363,7 +1363,7 @@ CREATE TABLE `oxseo` (
    KEY `OXOBJECTID` (`OXLANG`,`OXOBJECTID`,`OXSHOPID`),
    KEY `SEARCHSTD` (OXSTDURL(100),`OXSHOPID`),
    KEY `SEARCHSEO` (OXSEOURL(100))
-) ENGINE=InnoDB COMMENT 'Seo urls information';
+) ENGINE=InnoDB COMMENT 'Seo urls information' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxseohistory`
@@ -1383,7 +1383,7 @@ CREATE TABLE `oxseohistory` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXIDENT`,`OXSHOPID`,`OXLANG`),
   KEY `search` (`OXOBJECTID`,`OXSHOPID`,`OXLANG`)
-) ENGINE=InnoDB COMMENT 'Seo urls history. If url does not exists in oxseo, then checks here and redirects';
+) ENGINE=InnoDB COMMENT 'Seo urls history. If url does not exists in oxseo, then checks here and redirects' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxseologs`
@@ -1400,7 +1400,7 @@ CREATE TABLE IF NOT EXISTS `oxseologs` (
   `OXLANG` int(11) NOT NULL COMMENT 'Language id',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXIDENT`,`OXSHOPID`,`OXLANG`)
-) ENGINE=InnoDB COMMENT 'Seo logging. Logs bad requests';
+) ENGINE=InnoDB COMMENT 'Seo logging. Logs bad requests' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxshops`
@@ -1483,7 +1483,7 @@ CREATE TABLE `oxshops` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'Shop config';
+) ENGINE=InnoDB COMMENT 'Shop config' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxstates`
@@ -1504,7 +1504,7 @@ CREATE TABLE `oxstates` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`, `OXCOUNTRYID`),
   KEY(`OXCOUNTRYID`)
-) ENGINE = InnoDB COMMENT 'US States list';
+) ENGINE = InnoDB COMMENT 'US States list' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxtplblocks`
@@ -1528,7 +1528,7 @@ CREATE TABLE `oxtplblocks` (
   PRIMARY KEY (`OXID`),
   INDEX `search` (`OXACTIVE`, `OXTEMPLATE`, `OXPOS`),
   INDEX `oxtheme` (`OXTHEME`)
-) ENGINE=InnoDB COMMENT 'Module template blocks';
+) ENGINE=InnoDB COMMENT 'Module template blocks' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxuser`
@@ -1577,7 +1577,7 @@ CREATE TABLE `oxuser` (
   KEY `OXACTIVE` (`OXACTIVE`),
   KEY `OXLNAME` (`OXLNAME`),
   KEY `OXUPDATEEXP` (`OXUPDATEEXP`)
-) ENGINE=InnoDB COMMENT 'Shop administrators and users';
+) ENGINE=InnoDB COMMENT 'Shop administrators and users' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxuserbaskets`
@@ -1596,7 +1596,7 @@ CREATE TABLE `oxuserbaskets` (
   KEY `OXUPDATE` (`OXUPDATE`),
   KEY `OXTITLE` (`OXTITLE`),
   KEY `OXUSERID` (`OXUSERID`)
-) ENGINE=InnoDB COMMENT 'Active User baskets';
+) ENGINE=InnoDB COMMENT 'Active User baskets' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxuserbasketitems`
@@ -1615,7 +1615,7 @@ CREATE TABLE `oxuserbasketitems` (
   PRIMARY KEY  (`OXID`),
   KEY `OXBASKETID` (`OXBASKETID`),
   KEY `OXARTID` (`OXARTID`)
-) ENGINE=InnoDB COMMENT 'User basket items';
+) ENGINE=InnoDB COMMENT 'User basket items' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxuserpayments`
@@ -1631,7 +1631,7 @@ CREATE TABLE `oxuserpayments` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXUSERID` (`OXUSERID`)
-) ENGINE=InnoDB COMMENT 'User payments';
+) ENGINE=InnoDB COMMENT 'User payments' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxvendor`
@@ -1656,7 +1656,7 @@ CREATE TABLE `oxvendor` (
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`),
   KEY `OXACTIVE` (`OXACTIVE`)
-) ENGINE=InnoDB COMMENT 'Distributors list';
+) ENGINE=InnoDB COMMENT 'Distributors list' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxvouchers`
@@ -1664,7 +1664,7 @@ CREATE TABLE `oxvendor` (
 
 DROP TABLE IF EXISTS `oxvouchers` ;
 
-CREATE  TABLE IF NOT EXISTS `oxvouchers` (
+CREATE TABLE IF NOT EXISTS `oxvouchers` (
   `OXDATEUSED` DATE NULL DEFAULT NULL COMMENT 'Date, when coupon was used (set on order complete)',
   `OXORDERID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' COMMENT 'Order id (oxorder)',
   `OXUSERID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' COMMENT 'User id (oxuser)',
@@ -1679,7 +1679,7 @@ CREATE  TABLE IF NOT EXISTS `oxvouchers` (
   INDEX OXORDERID (`OXORDERID` ASC) ,
   INDEX OXUSERID (`OXUSERID` ASC) ,
   INDEX OXVOUCHERNR (`OXVOUCHERNR` ASC)
-) ENGINE = InnoDB COMMENT 'Generated coupons';
+) ENGINE = InnoDB COMMENT 'Generated coupons' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxvoucherseries`
@@ -1687,7 +1687,7 @@ CREATE  TABLE IF NOT EXISTS `oxvouchers` (
 
 DROP TABLE IF EXISTS `oxvoucherseries` ;
 
-CREATE  TABLE IF NOT EXISTS `oxvoucherseries` (
+CREATE TABLE IF NOT EXISTS `oxvoucherseries` (
   `OXID` char(32) character set latin1 collate latin1_general_ci NOT NULL DEFAULT '' COMMENT 'Series id',
   `OXSHOPID` int(11) NOT NULL default '1' COMMENT 'Shop id (oxshops)',
   `OXSERIENR` VARCHAR(255) NOT NULL DEFAULT '' COMMENT 'Series name',
@@ -1705,7 +1705,7 @@ CREATE  TABLE IF NOT EXISTS `oxvoucherseries` (
   PRIMARY KEY  (`OXID`),
   INDEX OXSERIENR (`OXSERIENR` ASC) ,
   INDEX OXSHOPID (`OXSHOPID` ASC)
-) ENGINE = InnoDB COMMENT 'Coupon series';
+) ENGINE = InnoDB COMMENT 'Coupon series' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 #
 # Table structure for table `oxwrapping`
@@ -1729,7 +1729,7 @@ CREATE TABLE `oxwrapping` (
   `OXPRICE` double NOT NULL default '0' COMMENT 'Price',
   `OXTIMESTAMP` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'Timestamp',
   PRIMARY KEY  (`OXID`)
-) ENGINE=InnoDB COMMENT 'Wrappings';
+) ENGINE=InnoDB COMMENT 'Wrappings' DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 DROP TABLE IF EXISTS `oxmigrations_ce`;
 DROP TABLE IF EXISTS `oxmigrations_project`;

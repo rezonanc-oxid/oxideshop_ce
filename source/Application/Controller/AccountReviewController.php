@@ -6,6 +6,7 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller;
 
+use OxidEsales\Eshop\Application\Model\Review;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\DatabaseProvider;
 
@@ -16,15 +17,16 @@ use OxidEsales\EshopCommunity\Core\DatabaseProvider;
  */
 class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\AccountController
 {
-
     protected $itemsPerPage = 10;
 
+    protected $_sThisTemplate = 'page/account/productreviews.tpl';
+
     /**
-     * Redirect to My Account, if feature is not enabled
+     * Redirect to My Account, if validation does not pass.
      */
     public function init()
     {
-        if (!$this->isUserAllowedToManageHisProductReviews()) {
+        if (!$this->isUserAllowedToManageHisProductReviews() || !$this->getUser()) {
             $this->redirectToAccountDashboard();
         }
 
@@ -32,19 +34,7 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Show the Reviews list only, if the feature has been enabled in eShop Admin
-     * -> Master Settings -> Core Settings -> Settings -> Account settings -> "Allow users to manage their product reviews"
-     *
-     * @return string
-     */
-    public function render()
-    {
-        $this->_sThisTemplate = 'page/account/productreviews.tpl';
-        return parent::render();
-    }
-
-    /**
-     * Generates the pagination
+     * Generates the pagination.
      *
      * @return \stdClass
      */
@@ -85,7 +75,7 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Return how many items will be displayed per page
+     * Return how many items will be displayed per page.
      *
      * @return int
      */
@@ -105,16 +95,15 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     {
         $productReviewList = null;
 
-        if ($user = $this->getUser()) {
-            $currentPage = $this->getActPage();
-            $offset = $currentPage * $this->getItemsPerPage();
-            $rowCount = $this->getItemsPerPage();
+        $currentPage = $this->getActPage();
+        $offset = $currentPage * $this->getItemsPerPage();
+        $rowCount = $this->getItemsPerPage();
 
-            $userId = $user->getId();
+        $user = $this->getUser();
+        $userId = $user->getId();
 
-            $review = oxNew(\OxidEsales\Eshop\Application\Model\Review::class);
-            $productReviewList = $review->getProductReviewsByUserId($userId, $offset, $rowCount);
-        }
+        $review = oxNew(Review::class);
+        $productReviewList = $review->getProductReviewsByUserId($userId, $offset, $rowCount);
 
         return $productReviewList;
     }
@@ -130,9 +119,9 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
      */
     public function deleteProductReviewAndRating()
     {
-        $user = $this->getUser();
-        
-        if ($user && $this->getSession()->checkSessionChallenge()) {
+        if ($this->getSession()->checkSessionChallenge()) {
+            $user = $this->getUser();
+            $userId = $user->getId();
             $db = DatabaseProvider::getDb();
             $db->startTransaction();
 
@@ -187,7 +176,7 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Delete a given review for a given user
+     * Delete a given review for a given user.
      *
      * @param string $userId    Id of the user the rating belongs to
      * @param string $articleId Id of the rating to delete
@@ -204,7 +193,7 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Delete a given review for a given user
+     * Delete a given review for a given user.
      *
      * @param string $userId   Id of the user the review belongs to
      * @param string $reviewId Id of the review to delete
@@ -215,7 +204,7 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     protected function deleteProductReview($userId, $reviewId)
     {
         /** The review must exist */
-        $review = oxNew(\OxidEsales\Eshop\Application\Model\Review::class);
+        $review = oxNew(Review::class);
         if (!$review->load($reviewId)) {
             return false;
         }

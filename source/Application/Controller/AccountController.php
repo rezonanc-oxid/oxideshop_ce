@@ -395,7 +395,7 @@ class AccountController extends \OxidEsales\Eshop\Application\Controller\Fronten
      *
      * @return bool
      */
-    public function getShowProductReviewList()
+    public function isUserAllowedToManageHisProductReviews()
     {
         return (bool) $this
             ->getConfig()

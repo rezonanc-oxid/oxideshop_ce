@@ -6,16 +6,19 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller;
 
+use OxidEsales\Eshop\Application\Controller\AccountController;
 use OxidEsales\Eshop\Application\Model\Review;
+use OxidEsales\Eshop\Application\Model\Rating;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\EshopCommunity\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\Request;
+use OxidEsales\Eshop\Core\DatabaseProvider;
 
 /**
  * Class AccountReviewController
  *
  * @package OxidEsales\EshopCommunity\Application\Controller
  */
-class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\AccountController
+class AccountReviewController extends AccountController
 {
     protected $itemsPerPage = 10;
 
@@ -34,16 +37,51 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Generates the pagination.
+     * Returns Product Review List
      *
-     * @return \stdClass
+     * @return \OxidEsales\Eshop\Core\Model\ListModel|null
      */
-    public function getPageNavigation()
+    public function getProductReviewList()
     {
-        $this->_iCntPages = ceil($this->getProductReviewItemsCnt() / $this->getItemsPerPage());
-        $this->_oPageNavigation = $this->generatePageNavigation();
+        $currentPage    = $this->getActPage();
+        $itemsPerPage   = $this->getItemsPerPage();
+        $offset         = $currentPage * $itemsPerPage;
 
-        return $this->_oPageNavigation;
+        $userId = $this->getUser()->getId();
+
+        $review = oxNew(Review::class);
+        $productReviewList = $review->getProductReviewsByUserId($userId, $offset, $itemsPerPage);
+
+        return $productReviewList;
+    }
+
+    /**
+     * Delete a product review and rating, which belongs to the active user.
+     *
+     * @return string
+     */
+    public function deleteProductReviewAndRating()
+    {
+        $articleId  = $this->getArticleIdFromRequest();
+        $reviewId   = $this->getReviewIdFromRequest();
+
+        if ($this->getSession()->checkSessionChallenge()) {
+            $db = DatabaseProvider::getDb();
+            $db->startTransaction();
+
+            try {
+                $this->deleteProductRating($articleId);
+                $this->deleteProductReview($reviewId);
+
+                $db->commitTransaction();
+            } catch (\Exception $exception) {
+                $db->rollbackTransaction();
+
+                Registry::getUtilsView()->addErrorToDisplay('ERROR_PRODUCT_REVIEW_AND_RATING_NOT_DELETED');
+            }
+        }
+
+        return $this->getRedirectUrlAfterReviewDeleting();
     }
 
     /**
@@ -53,25 +91,29 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
      */
     public function getBreadCrumb()
     {
-        $languageId = Registry::getLang()->getBaseLanguage();
-        $selfLink = $this->getViewConfig()->getSelfLink();
-
-        /**
-         * Parent level breadcrumb.
-         * Note: parent::getBreadCrumb() cannot be used here, as a different string will be rendered.
-         */
-        $breadCrumbPaths[] = [
-            'title' => Registry::getLang()->translateString('MY_ACCOUNT', $languageId, false),
-            'link'  => Registry::getSeoEncoder()->getStaticUrl($selfLink . 'cl=account')
+        return [
+            [
+                'title' => $this->getTranslatedString('MY_ACCOUNT'),
+                'link'  => $this->getMyAccountPageUrl(),
+            ],
+            [
+                'title' => $this->getTranslatedString('MY_PRODUCT_REVIEWS'),
+                'link'  => $this->getLink(),
+            ],
         ];
+    }
 
-        /** Own level breadcrumb */
-        $breadCrumbPaths[] = [
-            'title' => Registry::getLang()->translateString('MY_PRODUCT_REVIEWS', $languageId, false),
-            'link'  => $this->getLink()
-        ];
+    /**
+     * Generates the pagination.
+     *
+     * @return \stdClass
+     */
+    public function getPageNavigation()
+    {
+        $this->_iCntPages       = $this->getPagesCount();
+        $this->_oPageNavigation = $this->generatePageNavigation();
 
-        return $breadCrumbPaths;
+        return $this->_oPageNavigation;
     }
 
     /**
@@ -85,108 +127,86 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     }
 
     /**
-     * Get a list of a range of product reviews for the active user.
-     * The range to retrieve is determined by the offset and rowCount parameters
-     * which behave like in the MySQL LIMIT clause
-     *
-     * @return \OxidEsales\Eshop\Core\Model\ListModel|null
+     * @return string
      */
-    public function getProductReviewList()
+    private function getRedirectUrlAfterReviewDeleting()
     {
-        $productReviewList = null;
-
+        $lastPage = $this->getPagesCount();
         $currentPage = $this->getActPage();
-        $offset = $currentPage * $this->getItemsPerPage();
-        $rowCount = $this->getItemsPerPage();
 
-        $user = $this->getUser();
-        $userId = $user->getId();
+        if ($currentPage >= $lastPage) {
+            $currentPage = $lastPage - 1;
+        }
 
-        $review = oxNew(Review::class);
-        $productReviewList = $review->getProductReviewsByUserId($userId, $offset, $rowCount);
-
-        return $productReviewList;
+        return $currentPage > 0 ? 'account_reviewlist?pgNr=' . $currentPage : 'account_reviewlist';
     }
 
     /**
-     * Delete a product review and rating, which belongs to the active user.
-     * Keep in mind, that this method may return only false or void. Any other return value will cause malfunction in
-     * higher layers
-     *
-     * @return bool False, if the review cannot be deleted, because the validation failed
-     *
-     * @throws \Exception
+     * Redirect to My Account dashboard
      */
-    public function deleteProductReviewAndRating()
+    private function redirectToAccountDashboard()
     {
-        if ($this->getSession()->checkSessionChallenge()) {
-            $user = $this->getUser();
-            $userId = $user->getId();
-            $db = DatabaseProvider::getDb();
-            $db->startTransaction();
+        Registry::getUtils()->redirect(
+            $this->getMyAccountPageUrl(),
+            true,
+            302
+        );
+        exit(0);
+    }
 
-            try {
-                $ratingDeleted = true;
+    /**
+     * Returns pages count.
+     *
+     * @return int
+     */
+    private function getPagesCount()
+    {
+        return ceil($this->getProductReviewItemsCnt() / $this->getItemsPerPage());
+    }
 
-                $articleId = $this->getArticleIdFromRequest();
-                if (!$articleId ||
-                    !$this->deleteProductRating($userId, $articleId)
-                ) {
-                    $ratingDeleted = false;
-                }
+    /**
+     * Returns My Account page url.
+     *
+     * @return string
+     */
+    private function getMyAccountPageUrl()
+    {
+        $selfLink = $this->getViewConfig()->getSelfLink();
 
-                /** The review id must be given to be able to delete a single review */
-                $reviewId = $this->getReviewIdFromRequest();
-                if (!$ratingDeleted ||
-                    !$reviewId ||
-                    !$this->deleteProductReview($userId, $reviewId)
-                ) {
-                    $reviewDeleted = false;
-                } else {
-                    $reviewDeleted = true;
-                }
+        return Registry::getSeoEncoder()->getStaticUrl($selfLink . 'cl=account');
+    }
 
-                if ($ratingDeleted && $reviewDeleted) {
-                    $db->commitTransaction();
-                } else {
-                    $db->rollbackTransaction();
-                    Registry::getUtilsView()->addErrorToDisplay('ERROR_PRODUCT_REVIEW_AND_RATING_NOT_DELETED');
-                }
-            } catch (\Exception $exception) {
-                $db->rollbackTransaction();
+    /**
+     * Returns translated string.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    private function getTranslatedString($string)
+    {
+        $languageId = Registry::getLang()->getBaseLanguage();
 
-                throw $exception;
-            }
-        } else {
-            Registry::getUtilsView()->addErrorToDisplay('ERROR_PRODUCT_REVIEW_AND_RATING_NOT_DELETED');
-
-            return false;
-        }
-
-        $lastPageNr = ceil($this->getProductReviewItemsCnt() / $this->getItemsPerPage());
-        $pgNr = $this->getActPage();
-        if ($pgNr >= $lastPageNr) {
-            $pgNr = $lastPageNr - 1;
-        }
-        if ($pgNr > 0) {
-            return 'account_reviewlist?pgNr=' . $pgNr;
-        } else {
-            return 'account_reviewlist';
-        }
+        return Registry::getLang()->translateString(
+            $string,
+            $languageId,
+            false
+        );
     }
 
     /**
      * Delete a given review for a given user.
      *
-     * @param string $userId    Id of the user the rating belongs to
-     * @param string $articleId Id of the rating to delete
+     * @param int $articleId
      */
-    protected function deleteProductRating($userId, $articleId)
+    private function deleteProductRating($articleId)
     {
         $shopId = Registry::getConfig()->getShopId();
-        $rating = oxNew(\OxidEsales\Eshop\Application\Model\Rating::class);
+        $userId = $this->getUser()->getId();
+        $rating = oxNew(Rating::class);
 
         $ratingId = $rating->getProductRatingByUserId($articleId, $userId, $shopId);
+
         if ($ratingId) {
             $rating->delete($ratingId);
         }
@@ -195,34 +215,49 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
     /**
      * Delete a given review for a given user.
      *
-     * @param string $userId   Id of the user the review belongs to
-     * @param string $reviewId Id of the review to delete
+     * @param   int $reviewId
      *
-     * @return bool True, if the review has been deleted, False if the validation failed
-     *
+     * @throws \Exception
      */
-    protected function deleteProductReview($userId, $reviewId)
+    private function deleteProductReview($reviewId)
     {
-        /** The review must exist */
         $review = oxNew(Review::class);
+
         if (!$review->load($reviewId)) {
-            return false;
+            throw new \Exception('Review doesn\'t exist.');
         }
 
-        /** It must be a product review */
-        if ('oxarticle' !== $review->getObjectType()) {
-            return false;
+        if (!$this->isReviewProduct($review)) {
+            throw new \Exception('It\'s not a product review.');
         }
 
-        /** It must belong to the active user */
-        $reviewUserId = $review->getUser()->getId();
-        if ($reviewUserId != $userId) {
-            return false;
-        };
+        if (!$this->doesReviewBelongToCurrentUser($review)) {
+            throw new \Exception('Review doesn\' belong to logged user.');
+        }
 
         $review->delete($reviewId);
+    }
 
-        return true;
+    /**
+     * @param Review $review
+     *
+     * @return bool
+     */
+    private function isReviewProduct($review)
+    {
+        return 'oxarticle' === $review->getObjectType();
+    }
+
+    /**
+     * @param Review $review
+     * @return bool
+     */
+    private function doesReviewBelongToCurrentUser($review)
+    {
+        $currentUser  = $this->getUser();
+        $reviewUser   = $review->getUser();
+
+        return $currentUser->getId() === $reviewUser->getId();
     }
 
     /**
@@ -230,12 +265,11 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
      *
      * @return string
      */
-    protected function getArticleIdFromRequest()
+    private function getArticleIdFromRequest()
     {
-        $request = oxNew(\OxidEsales\Eshop\Core\Request::class);
-        $articleId = $request->getRequestEscapedParameter('aId', '');
+        $request = oxNew(Request::class);
 
-        return $articleId;
+        return $request->getRequestEscapedParameter('aId');
     }
 
     /**
@@ -243,27 +277,10 @@ class AccountReviewController extends \OxidEsales\Eshop\Application\Controller\A
      *
      * @return string
      */
-    protected function getReviewIdFromRequest()
+    private function getReviewIdFromRequest()
     {
-        $request = oxNew(\OxidEsales\Eshop\Core\Request::class);
-        $reviewId = $request->getRequestEscapedParameter('reviewId', '');
+        $request = oxNew(Request::class);
 
-        return $reviewId;
-    }
-
-    /**
-     * Redirect to My Account dashboard
-     */
-    protected function redirectToAccountDashboard()
-    {
-        $myAccountLink = $this->getViewConfig()->getSelfLink() . 'cl=account';
-        $myAccountUrl = Registry::getUtilsUrl()->processUrl($myAccountLink);
-
-        Registry::getUtils()->redirect(
-            $myAccountUrl,
-            true,
-            302
-        );
-        exit(0);
+        return $request->getRequestEscapedParameter('reviewId');
     }
 }

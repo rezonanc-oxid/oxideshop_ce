@@ -6,12 +6,11 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller;
 
-use OxidEsales\Eshop\Application\Controller\AccountController;
 use OxidEsales\Eshop\Application\Model\Review;
-use OxidEsales\Eshop\Application\Model\Rating;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Request;
 use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\EshopCommunity\Internal\Service\UserService;
 
 /**
  * Class AccountReviewController
@@ -47,12 +46,9 @@ class AccountReviewController extends AccountController
         $itemsPerPage   = $this->getItemsPerPage();
         $offset         = $currentPage * $itemsPerPage;
 
-        $userId = $this->getUser()->getId();
+        $userService = $this->getUserService();
 
-        $review = oxNew(Review::class);
-        $productReviewList = $review->getProductReviewsByUserId($userId, $offset, $itemsPerPage);
-
-        return $productReviewList;
+        return $userService->getArticleReviews($itemsPerPage, $offset);
     }
 
     /**
@@ -62,26 +58,14 @@ class AccountReviewController extends AccountController
      */
     public function deleteProductReviewAndRating()
     {
-        $articleId  = $this->getArticleIdFromRequest();
-        $reviewId   = $this->getReviewIdFromRequest();
-
         if ($this->getSession()->checkSessionChallenge()) {
-            $db = DatabaseProvider::getDb();
-            $db->startTransaction();
+            $review = $this->getReviewFromRequest();
 
-            try {
-                $this->deleteProductRating($articleId);
-                $this->deleteProductReview($reviewId);
-
-                $db->commitTransaction();
-            } catch (\Exception $exception) {
-                $db->rollbackTransaction();
-
-                Registry::getUtilsView()->addErrorToDisplay('ERROR_PRODUCT_REVIEW_AND_RATING_NOT_DELETED');
-            }
+            $userService = $this->getUserService();
+            $userService->deleteArticleReview($review);
         }
 
-        return $this->getRedirectUrlAfterReviewDeleting();
+        return $this->getArticleReviewListUrlPath();
     }
 
     /**
@@ -129,7 +113,7 @@ class AccountReviewController extends AccountController
     /**
      * @return string
      */
-    private function getRedirectUrlAfterReviewDeleting()
+    private function getArticleReviewListUrlPath()
     {
         $lastPage = $this->getPagesCount();
         $currentPage = $this->getActPage();
@@ -195,92 +179,30 @@ class AccountReviewController extends AccountController
     }
 
     /**
-     * Delete a given review for a given user.
+     * Retrieve the Review from the request
      *
-     * @param int $articleId
+     * @return Review
      */
-    private function deleteProductRating($articleId)
+    private function getReviewFromRequest()
     {
-        $shopId = Registry::getConfig()->getShopId();
-        $userId = $this->getUser()->getId();
-        $rating = oxNew(Rating::class);
+        $request = oxNew(Request::class);
+        $reviewId = $request->getRequestEscapedParameter('reviewId');
 
-        $ratingId = $rating->getProductRatingByUserId($articleId, $userId, $shopId);
-
-        if ($ratingId) {
-            $rating->delete($ratingId);
-        }
-    }
-
-    /**
-     * Delete a given review for a given user.
-     *
-     * @param   int $reviewId
-     *
-     * @throws \Exception
-     */
-    private function deleteProductReview($reviewId)
-    {
         $review = oxNew(Review::class);
+        $review->load($reviewId);
 
-        if (!$review->load($reviewId)) {
-            throw new \Exception('Review doesn\'t exist.');
-        }
-
-        if (!$this->isReviewProduct($review)) {
-            throw new \Exception('It\'s not a product review.');
-        }
-
-        if (!$this->doesReviewBelongToCurrentUser($review)) {
-            throw new \Exception('Review doesn\' belong to logged user.');
-        }
-
-        $review->delete($reviewId);
+        return $review;
     }
 
     /**
-     * @param Review $review
-     *
-     * @return bool
+     * @return UserService
      */
-    private function isReviewProduct($review)
+    private function getUserService()
     {
-        return 'oxarticle' === $review->getObjectType();
-    }
-
-    /**
-     * @param Review $review
-     * @return bool
-     */
-    private function doesReviewBelongToCurrentUser($review)
-    {
-        $currentUser  = $this->getUser();
-        $reviewUser   = $review->getUser();
-
-        return $currentUser->getId() === $reviewUser->getId();
-    }
-
-    /**
-     * Retrieve the article ID from the request
-     *
-     * @return string
-     */
-    private function getArticleIdFromRequest()
-    {
-        $request = oxNew(Request::class);
-
-        return $request->getRequestEscapedParameter('aId');
-    }
-
-    /**
-     * Retrieve the review ID from the request
-     *
-     * @return string
-     */
-    private function getReviewIdFromRequest()
-    {
-        $request = oxNew(Request::class);
-
-        return $request->getRequestEscapedParameter('reviewId');
+        return new UserService(
+            $this->getUser(),
+            DatabaseProvider::getDb(),
+            Registry::getConfig()->getShopId()
+        );
     }
 }

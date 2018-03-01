@@ -21,14 +21,14 @@ class AccountReviewController extends AccountController
 {
     protected $itemsPerPage = 10;
 
-    protected $_sThisTemplate = 'page/account/productreviews.tpl';
+    protected $_sThisTemplate = 'page/account/articlereviews.tpl';
 
     /**
      * Redirect to My Account, if validation does not pass.
      */
     public function init()
     {
-        if (!$this->isUserAllowedToManageHisProductReviews() || !$this->getUser()) {
+        if (!$this->isUserAllowedToManageOwnArticleReviews() || !$this->getUser()) {
             $this->redirectToAccountDashboard();
         }
 
@@ -36,11 +36,11 @@ class AccountReviewController extends AccountController
     }
 
     /**
-     * Returns Product Review List
+     * Returns Article Review List
      *
      * @return \OxidEsales\Eshop\Core\Model\ListModel|null
      */
-    public function getProductReviewList()
+    public function getArticleReviewList()
     {
         $currentPage    = $this->getActPage();
         $itemsPerPage   = $this->getItemsPerPage();
@@ -52,11 +52,11 @@ class AccountReviewController extends AccountController
     }
 
     /**
-     * Delete a product review and rating, which belongs to the active user.
+     * Delete an article review and rating, which belongs to the active user.
      *
      * @return string
      */
-    public function deleteProductReviewAndRating()
+    public function deleteArticleReviewAndRating()
     {
         if ($this->getSession()->checkSessionChallenge()) {
             $review = $this->getReviewFromRequest();
@@ -145,7 +145,7 @@ class AccountReviewController extends AccountController
      */
     private function getPagesCount()
     {
-        return ceil($this->getProductReviewItemsCnt() / $this->getItemsPerPage());
+        return ceil($this->getArticleReviewItemsCnt() / $this->getItemsPerPage());
     }
 
     /**

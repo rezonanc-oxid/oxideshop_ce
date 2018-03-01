@@ -351,7 +351,7 @@ class AccountTest extends \OxidTestCase
      * \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
      * should be 0
      *
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getArticleReviewItemsCnt
      */
     public function testGetProductReviewItemsCntReturnZeroForNoUser()
     {
@@ -366,7 +366,7 @@ class AccountTest extends \OxidTestCase
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountController::getArticleReviewItemsCnt
      */
     public function testGetProductReviewItemsCntReturnsExpectedCountForActiveUser()
     {

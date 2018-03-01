@@ -391,11 +391,11 @@ class AccountController extends \OxidEsales\Eshop\Application\Controller\Fronten
     }
 
     /**
-     * Return true, if the product review manager should be shown
+     * Return true, if the article review manager should be shown
      *
      * @return bool
      */
-    public function isUserAllowedToManageHisProductReviews()
+    public function isUserAllowedToManageOwnArticleReviews()
     {
         return (bool) $this
             ->getConfig()
@@ -407,7 +407,7 @@ class AccountController extends \OxidEsales\Eshop\Application\Controller\Fronten
      *
      * @return integer Number of reviews
      */
-    public function getProductReviewItemsCnt()
+    public function getArticleReviewItemsCnt()
     {
         $totalNrOfReviews = 0;
 

@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - New classes:
     - `OxidEsales\EshopCommunity\Application\Controller\AccountReviewController`
   - New methods:
-    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::isUserAllowedToManageHisProductReviews`
-    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::getProductReviewItemsCnt`
+    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::isUserAllowedToManageOwnArticleReviews`
+    - `OxidEsales\EshopCommunity\Application\Controller\AccountController::getArticleReviewItemsCnt`
     - `OxidEsales\EshopCommunity\Application\Model\Rating::getProductRatingByUserId`
     - `OxidEsales\EshopCommunity\Application\Model\Review::getProductReviewItemsCntByUserId`
     - `OxidEsales\EshopCommunity\Application\Model\Review::getProductReviewsByUserId`

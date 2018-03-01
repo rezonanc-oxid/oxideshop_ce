@@ -87,8 +87,8 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
             $this->createReview($user->getId(), $articleIds[$i], 'oxrecommlist');
         }
 
-        $reviewsTotal = $accountReviewController->getProductReviewItemsCnt();
-        $reviewsDisplayed = count($accountReviewController->getProductReviewList());
+        $reviewsTotal = $accountReviewController->getArticleReviewItemsCnt();
+        $reviewsDisplayed = count($accountReviewController->getArticleReviewList());
 
         $this->assertSame($itemsToCreate, $reviewsTotal);
         $this->assertSame($itemsPerPage, $reviewsDisplayed);
@@ -133,7 +133,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
         $this->assertTrue($this->productRatingExists($shopId, $userId, $articleId, 'oxarticle'));
 
         $accountReviewController = oxNew(\OxidEsales\Eshop\Application\Controller\AccountReviewController::class);
-        $result = $accountReviewController->deleteProductReviewAndRating();
+        $result = $accountReviewController->deleteArticleReviewAndRating();
 
         $this->assertNull($result);
 

@@ -171,7 +171,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::getProductReviewList
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::getArticleReviewList
      */
     public function testGetProductReviewListReturnsNullForNoUser()
     {
@@ -186,7 +186,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::getProductReviewList
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::getArticleReviewList
      */
     public function testGetProductReviewListReturnsExpectedListForActiveUser()
     {
@@ -208,7 +208,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReviewReturnsFalseOnNoSessionChallenge()
     {
@@ -224,7 +224,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReviewReturnsFalseOnNoUser()
     {
@@ -245,7 +245,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
      * In this test all preconditions for a successful deletion are met
      *
      * @dataProvider dataProviderTestDeleteProductReview
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReview($checkSessionChallenge,
                                             $userId,
@@ -361,7 +361,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReviewReturnsFalseOnNoReview()
     {
@@ -377,7 +377,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReviewReturnsFalseOnWrongReviewType()
     {
@@ -398,7 +398,7 @@ class AccountReviewControllerTest extends \OxidEsales\TestingLibrary\UnitTestCas
     }
 
     /**
-     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteProductReviewAndRating
+     * @covers \OxidEsales\EshopCommunity\Application\Controller\AccountReviewController::deleteArticleReviewAndRating
      */
     public function testDeleteProductReviewReturnsFalseOnWrongReviewUser()
     {
